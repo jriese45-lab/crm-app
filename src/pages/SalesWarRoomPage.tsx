@@ -8,7 +8,25 @@ import {
 } from 'lucide-react';
 import type { Scenario, AIProvider, KnowledgeDoc } from '../store/useWarRoomStore';
 import { useWarRoomStore, PROVIDER_DEFAULTS } from '../store/useWarRoomStore';
-import type { Message, SessionSummary } from '../store/useWarRoomStore';
+import type { Message } from '../store/useWarRoomStore';
+
+type SpeechRecognitionResultEvent = {
+  results: ArrayLike<ArrayLike<{ transcript: string }>>;
+};
+
+interface BrowserSpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+  onresult: ((event: SpeechRecognitionResultEvent) => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+type BrowserSpeechRecognitionCtor = new () => BrowserSpeechRecognition;
 
 // ── Scenario configs ──────────────────────────────────────────────────────────
 const SCENARIOS: { id: Scenario; label: string; description: string; icon: typeof PhoneCall; color: string }[] = [
@@ -133,7 +151,7 @@ export function SalesWarRoomPage() {
   } = useWarRoomStore();
 
   // Load document content from individual localStorage keys on mount
-  useEffect(() => { hydrateKnowledgeDocs(); }, []);
+  useEffect(() => { hydrateKnowledgeDocs(); }, [hydrateKnowledgeDocs]);
 
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [apiKeyInput, setApiKeyInput] = useState(apiKey);
@@ -142,9 +160,7 @@ export function SalesWarRoomPage() {
   const [showSettings, setShowSettings] = useState(!apiKey);
   const [streamingText, setStreamingText] = useState('');
   const [inputText, setInputText] = useState('');
-  const [useTextMode, setUseTextMode] = useState(false);
-
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -304,12 +320,15 @@ export function SalesWarRoomPage() {
 
   // Voice recognition
   const startListening = useCallback(() => {
-    const SpeechRecognition = (window as Window & { SpeechRecognition?: typeof window.SpeechRecognition; webkitSpeechRecognition?: typeof window.SpeechRecognition }).SpeechRecognition
-      ?? (window as Window & { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition;
-    if (!SpeechRecognition) { setUseTextMode(true); return; }
+    const speechWindow = window as Window & {
+      SpeechRecognition?: BrowserSpeechRecognitionCtor;
+      webkitSpeechRecognition?: BrowserSpeechRecognitionCtor;
+    };
+    const SpeechRecognitionCtor = speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) return;
 
     stopSpeaking();
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionCtor();
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.lang = 'en-US';
@@ -317,7 +336,7 @@ export function SalesWarRoomPage() {
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
     recognition.onerror = () => setIsListening(false);
-    recognition.onresult = (e: SpeechRecognitionEvent) => {
+    recognition.onresult = (e: SpeechRecognitionResultEvent) => {
       const transcript = e.results[0][0].transcript;
       if (transcript.trim()) callClaude(transcript, messages);
     };

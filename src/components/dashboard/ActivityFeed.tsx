@@ -38,11 +38,15 @@ function EventRow({ event }: { event: ActivityEvent }) {
       borderBottom: '1px solid var(--border-1)',
     }}>
       <div style={{
-        width: 6, height: 6, borderRadius: '50%',
-        background: cfg.color,
+        width: 20, height: 20, borderRadius: 7,
+        background: `${cfg.color}22`,
         flexShrink: 0,
-        boxShadow: `0 0 6px ${cfg.color}`,
-      }} />
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <Icon size={12} color={cfg.color} />
+      </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
           fontSize: 13,

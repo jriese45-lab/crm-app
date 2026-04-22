@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, Pencil, Mail, Phone, Globe, MapPin, Tag, Calendar, Star, Send, Trash2, ArrowRight, UserPlus, FileText } from 'lucide-react';
 import type { Lead, LeadPriority } from '../../types';
 import { useLeadsStore } from '../../store/useLeadsStore';
@@ -30,11 +30,9 @@ export function LeadDrawer({ lead, onClose, onEdit }: LeadDrawerProps) {
   const { columns, activity, addNote, deleteLead } = useLeadsStore();
   const { brand } = useBrandStore();
   const [noteText, setNoteText] = useState('');
-  const [currentLead, setCurrentLead] = useState(lead);
 
-  // Stay in sync if lead updates
   const storeLead = useLeadsStore((s) => s.leads.find((l) => l.id === lead.id));
-  useEffect(() => { if (storeLead) setCurrentLead(storeLead); }, [storeLead]);
+  const currentLead = storeLead ?? lead;
 
   const stage = columns.find((c) => c.id === currentLead.columnId);
   const prio = (currentLead.priority ?? 'medium') as LeadPriority;

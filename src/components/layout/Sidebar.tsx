@@ -1,11 +1,27 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Settings, TrendingUp, BookUser, Swords, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Settings,
+  TrendingUp,
+  BookUser,
+  Swords,
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  MapPinned,
+  FileText,
+  BriefcaseBusiness,
+} from 'lucide-react';
 import { useBrandStore } from '../../store/useBrandStore';
 
 const NAV = [
   { to: '/',         icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/calendar', icon: CalendarDays,    label: 'Calendar'   },
   { to: '/leads',    icon: TrendingUp,      label: 'Pipeline'  },
+  { to: '/jobs',     icon: BriefcaseBusiness, label: 'Jobs'    },
+  { to: '/field-ops', icon: MapPinned,      label: 'Field Ops' },
   { to: '/contacts', icon: BookUser,        label: 'Contacts'  },
+  { to: '/documents', icon: FileText,       label: 'Documents' },
   { to: '/settings', icon: Settings,        label: 'Settings'  },
 ];
 
