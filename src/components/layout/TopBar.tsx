@@ -1,12 +1,12 @@
 import { useLocation } from 'react-router-dom';
 import { useBrandStore } from '../../store/useBrandStore';
 
-const PAGE_TITLES: Record<string, string> = {
-  '/': 'Dashboard',
-  '/leads': 'Pipeline',
-  '/contacts': 'Contacts',
-  '/settings': 'Settings',
-  '/war-room': 'Sales War Room',
+const PAGE_META: Record<string, { title: string; sub: string }> = {
+  '/':          { title: 'Dashboard',       sub: 'Overview & pipeline health'      },
+  '/leads':     { title: 'Pipeline',        sub: 'Manage your lead stages'         },
+  '/contacts':  { title: 'Contacts',        sub: 'Full contact database'           },
+  '/settings':  { title: 'Settings',        sub: 'Brand & preferences'             },
+  '/war-room':  { title: 'Sales War Room',  sub: 'NEPQ AI training'                },
 };
 
 interface TopBarProps {
@@ -17,40 +17,80 @@ interface TopBarProps {
 export function TopBar({ collapsed: _c, onToggle: _t }: TopBarProps) {
   const { pathname } = useLocation();
   const { brand } = useBrandStore();
-  const title = PAGE_TITLES[pathname] ?? 'CRM';
+  const meta = PAGE_META[pathname] ?? { title: 'CRM', sub: '' };
+  const initial = brand.companyName.charAt(0).toUpperCase();
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
   return (
-    <header
-      style={{
-        height: 56,
-        background: '#fff',
-        borderBottom: '1px solid #eef0f4',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 40px',
-        flexShrink: 0,
-        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-      }}
-    >
-      <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1f2e' }}>{title}</span>
-      <div
-        style={{
-          width: 34,
-          height: 34,
-          borderRadius: '50%',
-          backgroundColor: brand.primaryColor,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#fff',
+    <header style={{
+      height: 60,
+      background: 'var(--surface-1)',
+      borderBottom: '1px solid var(--border-1)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 32px',
+      flexShrink: 0,
+    }}>
+      {/* Left: page title */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+        <h1 style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 18,
+          fontWeight: 600,
+          color: 'var(--text-1)',
+          letterSpacing: '-0.02em',
+          lineHeight: 1,
+        }}>
+          {meta.title}
+        </h1>
+        <span style={{
+          fontSize: 12,
+          color: 'var(--text-3)',
+          fontFamily: 'var(--font-body)',
+          fontWeight: 400,
+        }}>
+          {meta.sub}
+        </span>
+      </div>
+
+      {/* Right: clock + avatar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: 13,
+            fontWeight: 500,
+            color: 'var(--text-1)',
+            letterSpacing: '0.02em',
+          }}>
+            {timeStr}
+          </div>
+          <div style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: 10.5,
+            color: 'var(--text-3)',
+            letterSpacing: '0.02em',
+          }}>
+            {dateStr}
+          </div>
+        </div>
+
+        <div style={{
+          width: 32, height: 32, borderRadius: 8,
+          background: 'linear-gradient(135deg, var(--accent), #C47A10)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: '#000',
           fontWeight: 700,
-          fontSize: 13,
+          fontSize: 12.5,
+          fontFamily: 'var(--font-mono)',
           cursor: 'pointer',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        }}
-      >
-        {brand.companyName.charAt(0).toUpperCase()}
+          flexShrink: 0,
+        }}>
+          {initial}
+        </div>
       </div>
     </header>
   );

@@ -13,7 +13,7 @@ export const useBrandStore = create<BrandStore>()(
       brand: {
         companyName: 'MerchantCRM',
         logoUrl: '',
-        primaryColor: '#4F46E5',
+        primaryColor: '#0FBCAE',
       },
       updateBrand: (partial) =>
         set((state) => ({ brand: { ...state.brand, ...partial } })),

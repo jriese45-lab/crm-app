@@ -71,12 +71,19 @@ export function DashboardPage() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
         <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 26,
+            fontWeight: 600,
+            color: 'var(--text-1)',
+            letterSpacing: '-0.03em',
+            marginBottom: 5,
+          }}>
             Welcome back
           </h2>
-          <p style={{ fontSize: 13.5, color: '#64748b' }}>
+          <p style={{ fontSize: 13, color: 'var(--text-3)' }}>
             Here's what's happening with your pipeline today.
           </p>
         </div>
@@ -86,27 +93,27 @@ export function DashboardPage() {
             display: 'flex',
             alignItems: 'center',
             gap: 7,
-            padding: '10px 20px',
-            borderRadius: 10,
-            backgroundColor: brand.primaryColor,
-            color: '#fff',
+            padding: '9px 18px',
+            borderRadius: 9,
+            background: 'var(--accent)',
+            color: '#000',
             fontWeight: 600,
-            fontSize: 14,
+            fontSize: 13.5,
             border: 'none',
             cursor: 'pointer',
-            boxShadow: `0 4px 14px ${brand.primaryColor}40`,
+            boxShadow: '0 4px 20px var(--accent-glow)',
             transition: 'opacity 0.15s, transform 0.1s',
           }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.9'; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '0.88'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
         >
-          <Plus size={17} strokeWidth={2.5} />
+          <Plus size={15} strokeWidth={2.5} />
           Add Lead
         </button>
       </div>
 
-      <p style={{ fontSize: 11.5, color: '#94a3b8', marginBottom: 16 }}>
-        Drag widgets to rearrange your dashboard
+      <p style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 16, fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+        Drag to rearrange
       </p>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

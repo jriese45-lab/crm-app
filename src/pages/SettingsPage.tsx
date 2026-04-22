@@ -4,26 +4,26 @@ import { useBrandStore } from '../store/useBrandStore';
 import { Input } from '../components/ui/Input';
 
 const PRESET_COLORS = [
-  { label: 'Indigo', value: '#4F46E5' },
-  { label: 'Blue', value: '#2563EB' },
-  { label: 'Emerald', value: '#059669' },
-  { label: 'Violet', value: '#7C3AED' },
-  { label: 'Rose', value: '#E11D48' },
-  { label: 'Amber', value: '#D97706' },
-  { label: 'Cyan', value: '#0891B2' },
-  { label: 'Slate', value: '#475569' },
+  { label: 'Teal',    value: '#0FBCAE' },
+  { label: 'Cyan',    value: '#06B6D4' },
+  { label: 'Blue',    value: '#3B82F6' },
+  { label: 'Indigo',  value: '#6366F1' },
+  { label: 'Violet',  value: '#8B5CF6' },
+  { label: 'Emerald', value: '#10B981' },
+  { label: 'Rose',    value: '#F43F5E' },
+  { label: 'Amber',   value: '#F59E0B' },
 ];
 
 function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div style={{
-      background: '#fff',
-      borderRadius: 16,
+      background: 'var(--surface-1)',
+      border: '1px solid var(--border-1)',
+      borderRadius: 14,
       padding: '24px',
-      boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)',
     }}>
-      <p style={{ fontSize: 13.5, fontWeight: 600, color: '#0f172a', marginBottom: subtitle ? 4 : 18 }}>{title}</p>
-      {subtitle && <p style={{ fontSize: 12.5, color: '#94a3b8', marginBottom: 18 }}>{subtitle}</p>}
+      <p style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 600, color: 'var(--text-1)', letterSpacing: '-0.01em', marginBottom: subtitle ? 4 : 18 }}>{title}</p>
+      {subtitle && <p style={{ fontSize: 12.5, color: 'var(--text-3)', marginBottom: 18 }}>{subtitle}</p>}
       {children}
     </div>
   );
@@ -37,9 +37,18 @@ export function SettingsPage() {
   const set = (key: string, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
 
+  const hexAlpha = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  };
+
   const handleSave = () => {
     updateBrand(form);
-    document.documentElement.style.setProperty('--color-primary', form.primaryColor);
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', form.primaryColor);
+    root.style.setProperty('--accent', form.primaryColor);
+    root.style.setProperty('--accent-dim',  hexAlpha(form.primaryColor, 0.12));
+    root.style.setProperty('--accent-glow', hexAlpha(form.primaryColor, 0.22));
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -47,36 +56,28 @@ export function SettingsPage() {
   return (
     <div>
       {/* Page header — same structure as Dashboard */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
         <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>
-            White Label Settings
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 600, color: 'var(--text-1)', letterSpacing: '-0.03em', marginBottom: 4 }}>
+            Settings
           </h2>
-          <p style={{ fontSize: 13.5, color: '#64748b' }}>
-            Customize the CRM to match your brand identity.
+          <p style={{ fontSize: 13, color: 'var(--text-3)' }}>
+            Customize your brand identity and accent color.
           </p>
         </div>
         <button
           onClick={handleSave}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 7,
-            padding: '10px 20px',
-            borderRadius: 10,
-            backgroundColor: brand.primaryColor,
-            color: '#fff',
-            fontWeight: 600,
-            fontSize: 14,
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: `0 4px 14px ${brand.primaryColor}40`,
-            transition: 'opacity 0.15s',
+            display: 'flex', alignItems: 'center', gap: 7,
+            padding: '9px 18px', borderRadius: 9,
+            background: 'var(--accent)', color: '#000',
+            fontWeight: 600, fontSize: 13.5, border: 'none', cursor: 'pointer',
+            boxShadow: '0 4px 20px var(--accent-glow)', transition: 'opacity 0.15s',
           }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.9'; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
         >
-          <Save size={16} />
+          <Save size={15} />
           {saved ? 'Saved!' : 'Save Settings'}
         </button>
       </div>
@@ -102,37 +103,29 @@ export function SettingsPage() {
             </div>
           </Card>
 
-          <Card title="Primary Color" subtitle="Used for buttons, highlights, and active states">
+          <Card title="Accent Color" subtitle="Used for buttons, active nav, highlights, and glows">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {PRESET_COLORS.map((c) => (
-                  <button
-                    key={c.value}
-                    onClick={() => set('primaryColor', c.value)}
-                    title={c.label}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 5,
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                    }}
-                  >
-                    <div style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 10,
-                      backgroundColor: c.value,
-                      border: form.primaryColor === c.value ? '2.5px solid #0f172a' : '2.5px solid transparent',
-                      boxShadow: form.primaryColor === c.value ? '0 0 0 2px #fff, 0 0 0 4px #0f172a' : 'none',
-                      transition: 'transform 0.1s',
-                    }} />
-                    <span style={{ fontSize: 10.5, color: '#94a3b8' }}>{c.label}</span>
-                  </button>
-                ))}
+                {PRESET_COLORS.map((c) => {
+                  const isSelected = form.primaryColor === c.value;
+                  return (
+                    <button
+                      key={c.value}
+                      onClick={() => set('primaryColor', c.value)}
+                      title={c.label}
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                    >
+                      <div style={{
+                        width: 36, height: 36, borderRadius: 10,
+                        backgroundColor: c.value,
+                        border: isSelected ? `2px solid ${c.value}` : '2px solid transparent',
+                        boxShadow: isSelected ? `0 0 0 3px var(--surface-1), 0 0 0 5px ${c.value}` : 'none',
+                        transition: 'box-shadow 0.15s',
+                      }} />
+                      <span style={{ fontSize: 10, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>{c.label}</span>
+                    </button>
+                  );
+                })}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <input
