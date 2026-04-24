@@ -3,18 +3,17 @@ import { useBrandStore } from '../../store/useBrandStore';
 
 const PAGE_META: Record<string, { title: string; sub: string }> = {
   '/':          { title: 'Dashboard',       sub: 'Overview & pipeline health'      },
+  '/calendar':  { title: 'Calendar',        sub: 'Scheduling & follow-ups'          },
   '/leads':     { title: 'Pipeline',        sub: 'Manage your lead stages'         },
+  '/jobs':      { title: 'Jobs',            sub: 'Track active work orders'         },
+  '/field-ops': { title: 'Field Ops',       sub: 'Route planning & job costing'     },
   '/contacts':  { title: 'Contacts',        sub: 'Full contact database'           },
+  '/documents': { title: 'Documents',       sub: 'Proposals & invoices'             },
   '/settings':  { title: 'Settings',        sub: 'Brand & preferences'             },
   '/war-room':  { title: 'Sales War Room',  sub: 'NEPQ AI training'                },
 };
 
-interface TopBarProps {
-  collapsed: boolean;
-  onToggle: () => void;
-}
-
-export function TopBar({ collapsed: _c, onToggle: _t }: TopBarProps) {
+export function TopBar() {
   const { pathname } = useLocation();
   const { brand } = useBrandStore();
   const meta = PAGE_META[pathname] ?? { title: 'CRM', sub: '' };

@@ -8,6 +8,13 @@ const MIN_WIDTH = 64;
 const MAX_WIDTH = 320;
 const DEFAULT_WIDTH = 220;
 
+function hexAlpha(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 export function Layout() {
   const { brand } = useBrandStore();
   const [collapsed, setCollapsed] = useState(false);
@@ -25,13 +32,6 @@ export function Layout() {
     root.style.setProperty('--accent-dim',  hexAlpha(c, 0.12));
     root.style.setProperty('--accent-glow', hexAlpha(c, 0.22));
   }, [brand.primaryColor]);
-
-  function hexAlpha(hex: string, alpha: number): string {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
-  }
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if (collapsed) return;
@@ -89,7 +89,7 @@ export function Layout() {
 
       {/* Main content area */}
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, overflow: 'hidden' }}>
-        <TopBar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
+        <TopBar />
         <main style={{ flex: 1, overflow: 'auto', background: 'var(--bg)' }}>
           <div style={{ padding: '32px 36px', minHeight: '100%' }} className="animate-fade-up">
             <Outlet />
